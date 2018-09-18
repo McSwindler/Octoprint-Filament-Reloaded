@@ -27,6 +27,10 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
         return int(self._settings.get(["bounce"]))
 
     @property
+    def checks(self):
+        return int(self._settings.get(["checks"]))
+
+    @property
     def switch(self):
         return int(self._settings.get(["switch"]))
 
@@ -64,6 +68,7 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
         return dict(
             pin     = -1,   # Default is no pin
             bounce  = 250,  # Debounce 250ms
+            checks  = 1,    # Check once
             switch  = 0,    # Normally Open
             mode    = 0,    # Board Mode
             no_filament_gcode = '',
@@ -116,13 +121,15 @@ class FilamentReloadedPlugin(octoprint.plugin.StartupPlugin,
         sleep(self.bounce/1000)
         if self.no_filament():
             self._logger.info("Out of filament!")
-            if self.pause_print:
-                self._logger.info("Pausing print.")
-                self._printer.pause_print()
-            if self.no_filament_gcode:
-                self._logger.info("Sending out of filament GCODE")
-                self._printer.commands(self.no_filament_gcode)
+            if self.count >= self.checks:
+                if self.pause_print:
+                    self._logger.info("Pausing print.")
+                    self._printer.pause_print()
+                if self.no_filament_gcode:
+                    self._logger.info("Sending out of filament GCODE")
+                    self._printer.commands(self.no_filament_gcode)
         else:
+            self.count = 0
             self._logger.info("Filament detected!")
 
     def get_update_information(self):

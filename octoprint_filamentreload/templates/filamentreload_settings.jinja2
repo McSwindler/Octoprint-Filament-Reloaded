@@ -14,6 +14,12 @@
         </div>
     </div>
     <div class="control-group">
+        <label class="control-label">{{ _('Checks:') }}</label>
+        <div class="controls" data-toggle="tooltip" title="{{ _('How many times should the plugin check state before pausing (this prevents occasional false-positives)') }}">
+            <input type="number" step="any" min="1" class="input-mini text-right" data-bind="value: settings.plugins.filamentreload.checks">
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">{{ _('Switch Type:') }}</label>
         <div class="controls" data-toggle="tooltip" title="{{ _('Whether the sensor should trip when the switch goes HIGH or LOW, Normally Open is LOW when filament is present, and Normally Closed is HIGH when filament is present.') }}">
             <select class="select-mini" data-bind="value: settings.plugins.filamentreload.switch">
